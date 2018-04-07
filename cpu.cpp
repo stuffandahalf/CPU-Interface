@@ -8,8 +8,8 @@ Memory::Memory() {
     this->readMode = this->getReadMode();
     this->zero();
     for (int b = 0; b < ADD_BUS_WIDTH; b++) {
-        this->addressBus[b] = ADDRESS_PIN + b * 2;
-        pinMode(this->addressBus[b], INPUT);
+        this->addressbus[b] = ADDRESS_PIN + b * 2;
+        pinMode(this->addressbus[b], INPUT);
     }
 }
 
@@ -19,12 +19,13 @@ void Memory::zero() {
     }
 }
 
-unsigned short Memory::readAddress() {
+unsigned short Memory::getAddress() {
     unsigned short address = 0;
-    for (int b = ADD_BUS_WIDTH - 1; b >= 0; b--) {
-        address += digitalRead(addressBus[b]);
+    //for (int b = ADD_BUS_WIDTH - 1; b >= 0; b--) {
+    for (int b = 0; b < ADD_BUS_WIDTH; b++) {
+        address += digitalRead(addressbus[b]);
         if (b) {
-            address << 1;
+            address = address << 1;
         }
     }
     return address;
@@ -67,7 +68,15 @@ byte Memory::read(unsigned short address) {
     return data;
 }
 
-void Memory::printAddress(short address) {
+void Memory::printAddressRange(unsigned short from, unsigned short to) {
+    for (int i = from; i < to; i++) {
+        Serial.print(i, HEX);
+        Serial.print(":\t");
+        Serial.println(this->memory[i], HEX);
+    }
+}
+
+void Memory::printAddress(unsigned short address) {
     if (address < 0x10) {
         Serial.print("000");
     }
@@ -84,14 +93,14 @@ void Memory::printAddress(short address) {
 
 DataBus::DataBus() {
     for (int b = 0; b < DATA_BUS_WIDTH; b++) {
-        this->dataBus[b] = DATA_PIN + b * 2;
-        pinMode(this->dataBus[b], INPUT);
+        this->databus[b] = DATA_PIN + b * 2;
+        pinMode(this->databus[b], INPUT);
     }
 }
 
 void DataBus::setMode(int mode) {
     for (int b = 0; b < DATA_BUS_WIDTH; b++) {
-        pinMode(this->dataBus[b], mode);
+        pinMode(this->databus[b], mode);
     }
 }
 
@@ -99,9 +108,9 @@ byte DataBus::read() {
     setMode(INPUT);
     byte data = 0;
     for (int b = DATA_BUS_WIDTH - 1; b >= 0; b--) {
-        data += digitalRead(this->dataBus[b]);
+        data += digitalRead(this->databus[b]);
         if (b) {
-            data << 1;
+            data = data << 1;
         }
     }
     return data;
@@ -112,8 +121,46 @@ void DataBus::write(byte data) {
     bool bits[8];
     for(int i = 0; i < 8; i++) {
         bits[i] = (data >> i) & 1;
-        Serial.print(bits[i]);
-        digitalWrite(this->dataBus[i], bits[i]);
+        //Serial.print(bits[i]);
+        digitalWrite(this->databus[i], bits[i]);
     }
-    Serial.println();
+    //Serial.println();
+}
+
+CPU::CPU() {
+    this->mem = new Memory();
+    this->databus = new DataBus();
+}
+
+Memory *CPU::getMem() {
+    return this->mem;
+}
+
+DataBus *CPU::getDataBus() {
+    return this->databus;
+}
+
+extern CPU *cpu;
+
+void memoryHandler() {
+    //static bool eState = getE();
+    //Serial.println("clock changed state");
+    bool read = (cpu->getMem()->getReadMode() & getE());
+    byte data;
+    unsigned short address = cpu->getMem()->getAddress();
+    //Serial.println(address);
+    if (read) {
+        data = cpu->getMem()->read(address);
+        cpu->getDataBus()->write(data);
+    }
+    else {
+        data = cpu->getDataBus()->read();
+        Serial.println(address, HEX);
+        Serial.println(data, HEX);
+        cpu->getMem()->write(address, data);
+    }
+    /*if (cpu->getMem()->read(0x0082))
+    {
+        digitalWrite(HALTPIN, LOW);
+    }*/
 }
