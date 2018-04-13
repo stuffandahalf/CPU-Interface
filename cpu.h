@@ -9,9 +9,9 @@
 #define MEMORY_SIZE 1024
 
 #define MODE_PIN 8
-#define ADDRESS_PIN 23
+#define ADDRESS_PIN 23      //every other pin for bus width pins
 //#define DATA_PIN 22
-#define DATA_PIN 39
+#define DATA_PIN 39         //every other pin for bus width pins.
 #define HALTPIN 6
 
 #define E 2
@@ -26,7 +26,7 @@ bool getQ();
 
 class Memory {
     private:
-        bool readMode;
+        //bool readMode;
         int addressbus[ADD_BUS_WIDTH];
         byte memory[MEMORY_SIZE];
         
@@ -56,15 +56,18 @@ class CPU {
     private:
         Memory *mem;
         DataBus *databus;
+        bool halted;
         
     public:
-        
         CPU();
         void memoryHandler();
+        void toggleHalt();
         Memory *getMem();
         DataBus *getDataBus();
 };
 
 void memoryHandler();
+
+extern CPU *cpu;
 
 #endif
