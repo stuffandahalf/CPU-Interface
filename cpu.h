@@ -3,15 +3,16 @@
 
 #include <Arduino.h>
 
-//#define ADD_BUS_WIDTH 16
-#define ADD_BUS_WIDTH 8
+#define ADD_BUS_WIDTH 16
+//#define ADD_BUS_WIDTH 8
 #define DATA_BUS_WIDTH 8
 #define MEMORY_SIZE 1024
+//#define MEMORY_SIZE 65536
 
 #define MODE_PIN 8
 #define ADDRESS_PIN 23      //every other pin for bus width pins
 //#define DATA_PIN 22
-#define DATA_PIN 39         //every other pin for bus width pins.
+#define DATA_PIN 38         //every other pin for bus width pins.
 #define HALTPIN 6
 
 #define E 2
@@ -33,6 +34,7 @@ class Memory {
     public:
         Memory();
         void zero();
+        void fill(byte data);
         unsigned short getAddress();
         bool getReadMode();
         byte write(unsigned short address, byte data);

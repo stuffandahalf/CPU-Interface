@@ -3,9 +3,6 @@
 
 CPU *cpu;
 
-#define get_read (cpu->getMem()->getReadMode() & getE())
-#define get_write (!(cpu->getMem()->getReadMode() & cpu->getMem()->getReadMode()) & getE())
-
 void printTest();
 void setInstructions();
 
@@ -13,7 +10,7 @@ void setup() {
     Serial.begin(115200);
     
     cpu = new CPU();
-    new Oscillator(4);
+    //new Oscillator(4);
     
     setInstructions();
     //cpu->getMem()->printAddress(0x0082);
