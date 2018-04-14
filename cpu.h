@@ -3,6 +3,10 @@
 
 #include <Arduino.h>
 
+#define in_range(l, h, v) (l) <= (v) && (h) > (v)
+
+#define LEDPIN 14
+
 #define ADD_BUS_WIDTH 16
 //#define ADD_BUS_WIDTH 8
 #define DATA_BUS_WIDTH 8

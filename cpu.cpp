@@ -130,14 +130,21 @@ byte DataBus::read() {
 void DataBus::write(byte data) {
     setMode(OUTPUT);
     //bool bits[8];
-    for(int i = 0; i < 8; i++) {
-    //for (int i = DATA_BUS_WIDTH; i >= 0; i--) {
+    //for(int i = 0; i < DATA_BUS_WIDTH; i++) {
+    for (int i = DATA_BUS_WIDTH - 1; i >= 0; i--) {
         //bits[i] = (data >> i) & 1;
         //Serial.print(bits[i]);
         //digitalWrite(this->databus[i], bits[i]);
+        /*Serial.print(i);
+        Serial.print("\t");
+        Serial.print(this->databus[i]);
+        Serial.print("\t");
+        Serial.println((data >> i) & 1);*/
+        bool bit = (data >> i) & 1;
+        Serial.print(bit);
         digitalWrite(this->databus[i], (data >> i) & 1);
     }
-    //Serial.println();
+    Serial.println();
 }
 
 CPU::CPU() {
@@ -166,27 +173,49 @@ void memoryHandler() {
     //Serial.println("clock changed state");
     bool read = (cpu->getMem()->getReadMode() & getE());
     bool write = (!cpu->getMem()->getReadMode() & getE());
-    
+    /*Serial.print("read: ");
+    Serial.print(read);
+    Serial.print(" write: ");
+    Serial.println(write);*/
     byte data;
-    unsigned short address = cpu->getMem()->getAddress();
+    unsigned short rawAddress = cpu->getMem()->getAddress();
+    //Serial.println(rawAddress);
+    //unsigned short address = cpu->getMem()->getAddress();
     //unsigned short address = cpu->getMem()->getAddress() - 0xFF00;
-    //if (address == 0x82) {
-    cpu->getMem()->printAddress(address);
-    //}
-    //cpu->getMem()->printAddress(0x0082);
-    if (read & !write) {
-        data = cpu->getMem()->read(address);
-        cpu->getDataBus()->write(data);
+    
+    if (rawAddress >= 0xFC00) {
+        //unsigned short address = rawAddress & 0x03FF;
+        //unsigned short address = map(rawAddress, 0xFC00, 0xFFFF, 0, 1023);
+        unsigned short address = rawAddress - 0xFC00;
+        //cpu->getMem()->printAddress(address, HEX);
+        //}
+        /*if (in_range(0x0, 0x85, address))
+        {
+            cpu->getMem() ->printAddress(address);
+        }*/
+        //cpu->getMem()->printAddress(0x0082);
+        if (read & !write) {
+            Serial.print("read ");
+            Serial.print(rawAddress, HEX);
+            data = cpu->getMem()->read(address);
+            cpu->getDataBus()->write(data);
+        }
+        if (!read & write) {
+            //Serial.print("write ");
+            //Serial.println(rawAddress, HEX);
+            digitalWrite(LEDPIN, HIGH);
+            data = cpu->getDataBus()->read();
+            cpu->getMem()->write(address, data);
+        }
+        else {
+            
+        }
+        /*if (cpu->getMem()->read(0x0082))
+        {
+            digitalWrite(HALTPIN, LOW);
+        }*/
     }
-    else if (!read & write) {
-        data = cpu->getDataBus()->read();
-        cpu->getMem()->write(address, data);
-    }
-    else {
-        
-    }
-    /*if (cpu->getMem()->read(0x0082))
-    {
-        digitalWrite(HALTPIN, LOW);
+    /*else {
+        Serial.println(rawAddress, HEX);
     }*/
 }
