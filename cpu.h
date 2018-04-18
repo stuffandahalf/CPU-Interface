@@ -2,78 +2,73 @@
 #define CPU_H
 
 #include <Arduino.h>
+#include "instructions.h"
 
-#define in_range(l, h, v) (l) <= (v) && (h) > (v)
+#define LED 13
 
-#define LEDPIN 14
+/* 1kB of ram */
+#define MEMSIZE 1024
+#define ADDRESS_SIZE 16
+#define DATA_SIZE 8
 
-#define ADD_BUS_WIDTH 16
-//#define ADD_BUS_WIDTH 8
-#define DATA_BUS_WIDTH 8
-#define MEMORY_SIZE 1024
-//#define MEMORY_SIZE 65536
+#define CLOCK_IN 2
+#define MEMMODE 3
+#define RESET 4
+#define ADDRESS_PIN 22
+#define DATA_PIN 38
 
-#define MODE_PIN 8
-#define ADDRESS_PIN 23      //every other pin for bus width pins
-//#define DATA_PIN 22
-#define DATA_PIN 38         //every other pin for bus width pins.
-#define HALTPIN 6
+#define clock digitalRead(CLOCK_IN)
+#define mem_mode digitalRead(MEMMODE)
 
-#define E 2
-#define Q 3
+typedef unsigned short address;
 
-/*class MemoryBus {
-    
-};*/
-
-bool getE();
-bool getQ();
-
-class Memory {
+class MemoryBus {
     private:
-        //bool readMode;
-        int addressbus[ADD_BUS_WIDTH];
-        byte memory[MEMORY_SIZE];
-        
+        byte *addressbus;
+    
     public:
-        Memory();
-        void zero();
-        void fill(byte data);
-        unsigned short getAddress();
-        bool getReadMode();
-        byte write(unsigned short address, byte data);
-        byte read(unsigned short address);
-        void printAddressRange(unsigned short from, unsigned short to);
-        void printAddress(unsigned short address);
+        MemoryBus();
+        
+        address getAddress();
 };
 
 class DataBus {
     private:
-        int databus[DATA_BUS_WIDTH];
-        
+        byte *databus;
+    
     public:
         DataBus();
+        
         void setMode(int mode);
         byte read();
-        void write(byte data);
+        void write();
 };
 
 class CPU {
     private:
-        Memory *mem;
+        byte *memory;
+        //byte memory[MEMSIZE];
+        MemoryBus *memorybus;
         DataBus *databus;
-        bool halted;
-        
+    
     public:
         CPU();
-        void memoryHandler();
-        void toggleHalt();
-        Memory *getMem();
+        
+        void clearMemory();
+        void reset();
+        void setBytes(address start, int bytes, byte data[]);
+        void printAddress(address addr);
+        void printAddressRange(address from, address to);
+        
+        byte *getMemory();
+        MemoryBus *getMemoryBus();
         DataBus *getDataBus();
-};
+}
 
+extern *cpu;
+
+void pin_init();
+void setInstructions();
 void memoryHandler();
-
-extern CPU *cpu;
 
 #endif
