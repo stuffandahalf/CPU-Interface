@@ -17,7 +17,7 @@ void DataBus::setMode(int mode) {
 byte DataBus::read() {
     this->setMode(INPUT);
     byte data = 0;
-    for (int i = DATA_SIZE - 1; i >= 0; i++) {
+    for (int i = DATA_SIZE - 1; i >= 0; i--) {
         data += digitalRead(this->databus[i]);
         if (i) {
             data <<= 1;

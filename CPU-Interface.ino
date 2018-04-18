@@ -1,9 +1,10 @@
 #include "cpu.h"
+#include "oscillator.h"
 
-byte mem[MEMSIZE];
+//byte mem[MEMSIZE];
 
-byte addressbus[ADDRESS_SIZE];
-byte databus[DATA_SIZE];
+//byte addressbus[ADDRESS_SIZE];
+//byte databus[DATA_SIZE];
 
 CPU *cpu;
 
@@ -11,15 +12,15 @@ void setup() {
     Serial.begin(115200);
     pin_init();
     cpu = new CPU();
+    new Oscillator(4);
+    attachInterrupt(digitalPinToInterrupt(CLOCK_IN), memoryHandler, CHANGE);
+    //attachInterrupt(digitalPinToInterrupt(CLOCK_IN), changeTest, CHANGE);
     //delay(3000);
     //cpu->printAddressRange(0, 1024);
 }
 
 void loop() {
     //Serial.println(cpu->getMemory()[0x0082], HEX);
-    if (!digitalRead(RESET_IN)) {
-        cpu->reset();
-    }
 }
 
 /*void initAddressBus() {

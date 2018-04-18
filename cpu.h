@@ -11,8 +11,11 @@
 #define DATA_SIZE 8
 
 #define CLOCK_IN 2
-#define MEMMODE 3
+//#define CLOCK_IN 3
+//#define MEMMODE 3
+#define MEMMODE 8
 #define RESET_OUT 4
+
 #define RESET_IN 21
 #define ADDRESS_PIN 22
 #define DATA_PIN 38
@@ -41,7 +44,7 @@ class DataBus {
         
         void setMode(int mode);
         byte read();
-        void write();
+        void write(byte data);
 };
 
 class CPU {
@@ -55,7 +58,10 @@ class CPU {
         
         void clearMemory();
         void reset();
+        void setByte(address addr, byte data);
         void setBytes(address start, int bytes, byte data[]);
+        byte getByte(address addr);
+        void setInstructions();
         void printAddress(address addr);
         void printAddressRange(address from, address to);
         
@@ -70,5 +76,6 @@ void pin_init();
 void setInstructions();
 void memoryHandler();
 void resetWrapper();
+void changeTest();
 
 #endif
