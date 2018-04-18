@@ -2,7 +2,6 @@
 #define CPU_H
 
 #include <Arduino.h>
-#include "instructions.h"
 
 #define LED 13
 
@@ -13,7 +12,8 @@
 
 #define CLOCK_IN 2
 #define MEMMODE 3
-#define RESET 4
+#define RESET_OUT 4
+#define RESET_IN 21
 #define ADDRESS_PIN 22
 #define DATA_PIN 38
 
@@ -47,7 +47,6 @@ class DataBus {
 class CPU {
     private:
         byte *memory;
-        //byte memory[MEMSIZE];
         MemoryBus *memorybus;
         DataBus *databus;
     
@@ -70,5 +69,6 @@ extern *cpu;
 void pin_init();
 void setInstructions();
 void memoryHandler();
+void resetWrapper();
 
 #endif

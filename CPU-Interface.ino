@@ -11,14 +11,15 @@ void setup() {
     Serial.begin(115200);
     pin_init();
     cpu = new CPU();
-    setInstructions();
-    //cpu->reset();
     //delay(3000);
     //cpu->printAddressRange(0, 1024);
 }
 
 void loop() {
-    
+    //Serial.println(cpu->getMemory()[0x0082], HEX);
+    if (!digitalRead(RESET_IN)) {
+        cpu->reset();
+    }
 }
 
 /*void initAddressBus() {
