@@ -17,7 +17,7 @@
 #define RESET_OUT 4
 
 #define RESET_IN 21
-#define ADDRESS_PIN 22
+#define ADDRESS_PIN 23
 #define DATA_PIN 38
 
 #define clock digitalRead(CLOCK_IN)
