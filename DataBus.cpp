@@ -3,7 +3,7 @@
 DataBus::DataBus() {
     this->databus = new byte[DATA_SIZE];
     for (int i = 0; i < DATA_SIZE; i++) {
-        this->databus[i] = DATA_SIZE + 2 * i;
+        this->databus[i] = DATA_PIN + 2 * i;
         pinMode(this->databus[i], INPUT);
     }
 }

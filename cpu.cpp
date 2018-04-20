@@ -93,11 +93,14 @@ void CPU::setInstructions() {
     this->setBytes(0x0000, 9, inst);
     this->setBytes(0x0080, 3, data);
     this->setBytes(0xFFFE - 0xFC00, 2, reset);
+    //this->setBytes(1022, 2, reset);
     
     //Serial.println("Instructions set");
     //this->printAddressRange(0x0000, 0x0009);
     //this->printAddressRange(0x0080, 0x0083);
     //cpu->printAddressRange(0xFFFE, 0xFFFF);
+    //this->printAddress(1022);
+    //this->printAddress(1023);
     //cpu->printAddressRange(0xFFFE, 0x10000);
 }
 
@@ -121,6 +124,8 @@ void pin_init() {
     pinMode(LED, OUTPUT);
 }
 
+#define is_instruction (addr >= 0 && addr < 1024) || addr == 0x3FE || addr == 0x3FF
+
 void memoryHandler() {
     //Serial.println("Clock changed");
     //Serial.println("C");
@@ -129,27 +134,42 @@ void memoryHandler() {
     
     address raw_addr = cpu->getMemoryBus()->getAddress();
     //cpu->printAddress(raw_addr);
-    Serial.println(raw_addr, HEX);
-    address addr = raw_addr - 0xFC00;
-    //address addr = cpu->getMemoryBus()->getAddress() - 0xFC00;
-    //Serial.println(addr, HEX);
-    byte data;
-    
-    if (read & !write) {
-    //    Serial.println("read");
-    //    data = cpu->getMemory()[addr];
-        data = cpu->getByte(addr);
-        cpu->getDataBus()->write(data);
-    //    
+    //Serial.println(raw_addr, HEX);
+    //cpu->printAddress(0x0082);
+    if (raw_addr >= 0xFC00 && raw_addr <= 0xFFFF) {
+        address addr = raw_addr - 0xFC00;
+        /*if (is_instruction) {
+            //Serial.println("1");
+            cpu->printAddress(addr);
+        }*/
+        if (cpu->getByte(0x0082)) {
+            digitalWrite(LED, HIGH);
+        }
+        //cpu->printAddress(0xFFFE - 0xFC00);
+        //cpu->printAddress(0x3FE);
+        //cpu->printAddress(addr);
+        //address addr = cpu->getMemoryBus()->getAddress() - 0xFC00;
+        //Serial.println(addr, HEX);
+        //Serial.println(addr, HEX);
+        //cpu->printAddress(addr);
+        byte data;
+        
+        if (read & !write) {
+        //    Serial.println("read");
+        //    data = cpu->getMemory()[addr];
+            data = cpu->getByte(addr);
+            cpu->getDataBus()->write(data);
+        //    
+        }
+        else if (!read & write) {
+            data = cpu->getDataBus()->read();
+            //cpu->getMemory()[addr] = data;
+            cpu->setByte(addr, data);
+        }
+        //else {
+        //    //Serial.println("what is this");
+        //}
     }
-    else if (!read & write) {
-        data = cpu->getDataBus()->read();
-        //cpu->getMemory()[addr] = data;
-        cpu->setByte(addr, data);
-    }
-    //else {
-    //    //Serial.println("what is this");
-    //}
 }
 
 void resetWrapper() {
