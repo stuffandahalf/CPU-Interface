@@ -1,3 +1,4 @@
+#include "serbuf.h"
 #include "cpu.h"
 #include "oscillator.h"
 
@@ -7,10 +8,12 @@
 //byte databus[DATA_SIZE];
 
 CPU *cpu;
+SerBuf *buf;
 
 void setup() {
     Serial.begin(115200);
     pin_init();
+    buf = new SerBuf();
     cpu = new CPU();
     new Oscillator(4);
     attachInterrupt(digitalPinToInterrupt(CLOCK_IN), memoryHandler, CHANGE);
@@ -21,6 +24,10 @@ void setup() {
 
 void loop() {
     //Serial.println(cpu->getMemory()[0x0082], HEX);
+    if (buf->hasNext()) {
+        buf->printNext();
+    }
+    //cpu->printAddress(0x0082);
 }
 
 /*void initAddressBus() {

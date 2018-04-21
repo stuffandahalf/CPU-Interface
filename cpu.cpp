@@ -137,6 +137,8 @@ void memoryHandler() {
     //Serial.println(raw_addr, HEX);
     //cpu->printAddress(0x0082);
     if (raw_addr >= 0xFC00 && raw_addr <= 0xFFFF) {
+        //Serial.println(raw_addr, HEX);
+        buf->add(raw_addr);
         address addr = raw_addr - 0xFC00;
         /*if (is_instruction) {
             //Serial.println("1");

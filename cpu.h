@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include <Arduino.h>
+#include "serbuf.h"
 
 #define LED 13
 
@@ -71,6 +72,7 @@ class CPU {
 }
 
 extern *cpu;
+extern SerBuf *buf;
 
 void pin_init();
 void setInstructions();
