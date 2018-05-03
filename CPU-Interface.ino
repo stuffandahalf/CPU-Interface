@@ -8,12 +8,12 @@
 //byte databus[DATA_SIZE];
 
 CPU *cpu;
-SerBuf *buf;
+//SerBuf *buf;
 
 void setup() {
-    Serial.begin(115200);
+    Serial.begin(9600);
     pin_init();
-    buf = new SerBuf();
+    //buf = new SerBuf();
     cpu = new CPU();
     new Oscillator(4);
     attachInterrupt(digitalPinToInterrupt(CLOCK_IN), memoryHandler, CHANGE);
@@ -24,9 +24,9 @@ void setup() {
 
 void loop() {
     //Serial.println(cpu->getMemory()[0x0082], HEX);
-    if (buf->hasNext()) {
+    /*if (buf->hasNext()) {
         buf->printNext();
-    }
+    }*/
     //cpu->printAddress(0x0082);
 }
 

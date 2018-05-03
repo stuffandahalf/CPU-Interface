@@ -8,9 +8,13 @@
 
 /* 1kB of ram */
 #define MEMSIZE 1024
+#define MEMEND 0xFFFF
+#define MEMSTART MEMEND - MEMSIZE
 #define ADDRESS_SIZE 16
 #define DATA_SIZE 8
 
+
+#define MEMRDY 22
 #define CLOCK_IN 2
 //#define CLOCK_IN 3
 //#define MEMMODE 3
@@ -65,6 +69,8 @@ class CPU {
         void setInstructions();
         void printAddress(address addr);
         void printAddressRange(address from, address to);
+        
+        void setMEMRDY(bool state);
         
         byte *getMemory();
         MemoryBus *getMemoryBus();
