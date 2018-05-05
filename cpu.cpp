@@ -1,8 +1,8 @@
 #include "cpu.h"
 
 CPU::CPU() {
-    pinMode(MEMRDY, OUTPUT);
-    digitalWrite(MEMRDY, HIGH);
+    pinMode(MRDY, OUTPUT);
+    digitalWrite(MRDY, HIGH);
     
     this->memory = new byte[MEMSIZE];
     this->memorybus = new MemoryBus();
@@ -47,8 +47,8 @@ void CPU::printAddressRange(address from, address to) {
     }
 }
 
-void CPU::setMEMRDY(bool state) {
-    digitalWrite(MEMRDY, state);
+void CPU::setMRDY(byte state) {
+    digitalWrite(MRDY, state);
 }
 
 void CPU::setByte(address addr, byte data) {
@@ -194,16 +194,16 @@ void pin_init() {
 //}
 
 void memoryHandler() {
-    cpu->setMEMRDY(false);
-    detachInterrupt(digitalPinToInterrupt(CLOCK_IN));
+    cpu->setMRDY(LOW);
+    //Serial.println(digitalRead(MRDY));
     bool read = clock & mem_mode;
     bool write = clock & !mem_mode;
     
     address raw_address = cpu->getMemoryBus()->getAddress();
     address addr = raw_address - MEMSTART;
     
-    //Serial.println(raw_address, HEX);
-    cpu->printAddress(0x0082);
+    Serial.println(raw_address, HEX);
+    //cpu->printAddress(0x0082);
     
     if (read & !write) {
         byte data = cpu->getMemory()[addr];
@@ -214,8 +214,7 @@ void memoryHandler() {
         cpu->getMemory()[addr] = data;
     }
     delay(50);
-    attachInterrupt(digitalPinToInterrupt(CLOCK_IN), memoryHandler, CHANGE);
-    //cpu->setMEMRDY(true);
+    cpu->setMRDY(HIGH);
 }
 
 void resetWrapper() {

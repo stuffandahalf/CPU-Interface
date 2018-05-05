@@ -11,13 +11,12 @@ CPU *cpu;
 //SerBuf *buf;
 
 void setup() {
-    Serial.begin(9600);
+    Serial.begin(115200);
     pin_init();
     //buf = new SerBuf();
     cpu = new CPU();
     new Oscillator(4);
     attachInterrupt(digitalPinToInterrupt(CLOCK_IN), memoryHandler, CHANGE);
-    //attachInterrupt(digitalPinToInterrupt(CLOCK_IN), changeTest, CHANGE);
     //delay(3000);
     //cpu->printAddressRange(0, 1024);
 }

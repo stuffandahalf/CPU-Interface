@@ -14,7 +14,7 @@
 #define DATA_SIZE 8
 
 
-#define MEMRDY 22
+#define MRDY 22
 #define CLOCK_IN 2
 //#define CLOCK_IN 3
 //#define MEMMODE 3
@@ -70,7 +70,7 @@ class CPU {
         void printAddress(address addr);
         void printAddressRange(address from, address to);
         
-        void setMEMRDY(bool state);
+        void setMRDY(byte state);
         
         byte *getMemory();
         MemoryBus *getMemoryBus();
