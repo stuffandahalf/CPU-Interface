@@ -1,0 +1,56 @@
+#include "oscillator.h"
+
+#define CLOCKIN 2
+#define LEDPIN 13
+
+#define MEMSIZE 1024    // 1K ram
+#define ADDRESS_WIDTH 16
+#define DATA_WIDTH 8
+
+byte mem[MEMSIZE];
+byte addressBus[ADDRESS_WIDTH] = { 23, 25, 27, 29, 31, 33, 35, 37, 39, 41, 43, 45, 47, 49, 51, 53 };
+byte dataBus[DATA_WIDTH] = { 38, 40, 42, 44, 46, 48, 50, 52 };
+
+#define init_addressbus() { \
+    for (int i = 0; i < ADDRESS_WIDTH; i++) { \
+        pinMode(addressBus[i], INPUT); \
+    } \
+}
+
+byte read_address();
+byte read_databus();
+void write_databus(byte data);
+void memory_handler();
+
+void setup() {
+    Serial.begin(115200);
+    
+    pinMode(CLOCKIN, INPUT);
+    pinMode(LEDPIN, OUTPUT);
+    
+    init_addressbus();
+    
+    new Oscillator(4);
+    
+    attachInterrupt(digitalPinToInterrupt(CLOCKIN), memory_handler, HIGH);
+}
+
+void loop() {
+    
+}
+
+byte read_address() {
+    return 0;
+}
+
+byte read_databus() {
+    return 0;
+}
+
+void write_databus(byte data) {
+    
+}
+
+void memory_handler() {
+    digitalWrite(LEDPIN, !digitalRead(LEDPIN));
+}
